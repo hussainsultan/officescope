@@ -14,7 +14,7 @@ from flask.ext.uploads import (UploadSet, configure_uploads, DEFAULTS,
 from app import db
 from app import app
 
-from models import get_user_name, Officescope_user, Officescope_document, Officescope_folder, Officescope_favorite
+from models import get_user_name, User, Document, Folder, Favorite
 
 #Uploads
 uploaded_files = UploadSet('files', DEFAULTS)
@@ -26,7 +26,7 @@ officescope = Blueprint('officescope', __name__)
 def before_request():
     g.user = None
     if 'user_id' in session:
-        g.user = Officescope_user.query.filter_by(id=session['user_id']).first()
+        g.user = User.query.filter_by(id=session['user_id']).first()
 
 
 @officescope.route('/about')
@@ -49,16 +49,16 @@ def home(path):
     if g.user:
         """
         if not path_exists(path):
-            flash("Officescope_folder '%s' does not exist" % path)
+            flash("Folder '%s' does not exist" % path)
             return redirect(url_for('home', path='home'))
         """
-        folders = Officescope_folder.query.filter(Officescope_folder.owner_id == g.user.id,
-            Officescope_folder.path == path).all()
-        documents = Officescope_document.query.filter(Officescope_document.owner_id == g.user.id,
-            Officescope_document.folder_url == path).all()
+        folders = Folder.query.filter(Folder.owner_id == g.user.id,
+            Folder.path == path).all()
+        documents = Document.query.filter(Document.owner_id == g.user.id,
+            Document.folder_url == path).all()
         #join query
-        favorites = Officescope_favorite.query.join(Officescope_folder).filter(Officescope_favorite.user_id == g.user.id,
-            Officescope_folder.id == Officescope_favorite.folder_id).all()
+        favorites = Favorite.query.join(Folder).filter(Favorite.user_id == g.user.id,
+            Folder.id == Favorite.folder_id).all()
         return render_template('officescope/home.html', folders=folders, documents=documents,
             parent_path=path, favorites=favorites)
     else:
@@ -71,12 +71,12 @@ def create_folder(path):
         return redirect(url_for('login'))
     #error = None
     if g.user and request.method =='POST':
-        parent_folder = Officescope_folder.query.filter(Officescope_folder.owner_id == g.user.id,
-            Officescope_folder.target == path).first()
+        parent_folder = Folder.query.filter(Folder.owner_id == g.user.id,
+            Folder.target == path).first()
         if parent_folder.owner_id != g.user.id:
             abort(401)
         target_url = '%s/%s' % (path, request.form['folder_name'])
-        new_folder = Officescope_folder(request.form['folder_name'], path, target_url)
+        new_folder = Folder(request.form['folder_name'], path, target_url)
         #folder backref
         new_folder.parent_folder = parent_folder
         new_folder.owner = g.user
@@ -91,8 +91,8 @@ def add_favorite(path, folder_id):
         return redirect(url_for('officescope.login'))
     #error = None
     if g.user:
-        favorite_folder = Officescope_folder.query.filter_by(id=folder_id).first()
-        new_favorite = Officescope_favorite()
+        favorite_folder = Folder.query.filter_by(id=folder_id).first()
+        new_favorite = Favorite()
         new_favorite.user = g.user
         new_favorite.folder = favorite_folder
         db.session.add(new_favorite)
@@ -107,9 +107,9 @@ def delete_folder(path, folder_id):
         return redirect(url_for('officescope.login'))
     #error = None
     if g.user:
-        folder_to_delete = Officescope_folder.query.filter_by(id=folder_id).first()
-        favorite_to_delete = Officescope_favorite.query.filter(Officescope_favorite.user_id == g.user.id,
-            Officescope_favorite.folder_id == folder_id).first()
+        folder_to_delete = Folder.query.filter_by(id=folder_id).first()
+        favorite_to_delete = Favorite.query.filter(Favorite.user_id == g.user.id,
+            Favorite.folder_id == folder_id).first()
         if favorite_to_delete:
             db.session.delete(favorite_to_delete)
         db.session.delete(folder_to_delete)
@@ -123,7 +123,7 @@ def delete_document(path, doc_id):
         return redirect(url_for('officescope.login'))
     #error = None
     if g.user:
-        document_to_delete = Officescope_document.query.filter_by(id=doc_id).first()
+        document_to_delete = Document.query.filter_by(id=doc_id).first()
         db.session.delete(document_to_delete)
         db.session.commit()
         file_to_delete = app.config['UPLOADED_FILES_DEST'] + document_to_delete.title
@@ -141,14 +141,14 @@ def upload_file(path):
         return redirect(url_for('officescope.login'))
     #error = None
     if g.user and request.method == 'POST' and ('file' in request.files):
-        parent_folder = Officescope_folder.query.filter(Officescope_folder.owner_id == g.user.id,
-            Officescope_folder.target == path).first()
+        parent_folder = Folder.query.filter(Folder.owner_id == g.user.id,
+            Folder.target == path).first()
         if parent_folder.owner_id != g.user.id:
             abort(401)
         try:
             filename = uploaded_files.save(request.files['file'])
             file_url = uploaded_files.url(filename)
-            new_document = Officescope_document(title=filename, folder_url=parent_folder.target,
+            new_document = Document(title=filename, folder_url=parent_folder.target,
                 download_url=file_url)
             #documents backref
             new_document.parent_folder = parent_folder
@@ -173,7 +173,7 @@ def login():
         return redirect(url_for('officescope.home'))
     error = None
     if request.method == 'POST':
-        user = Officescope_user.query.filter_by(username=request.form['username']).first()
+        user = User.query.filter_by(username=request.form['username']).first()
 
         if user is None:
             error = 'Invalid username'
@@ -210,12 +210,12 @@ def register():
             error = 'You have to enter a password'
         elif request.form['password'] != request.form['password2']:
             error = 'The two passwords do not match'
-        elif Officescope_user.query.filter_by(username=request.form['username']).first() is not None:
+        elif User.query.filter_by(username=request.form['username']).first() is not None:
             error = 'The username is already taken'
         else:
-            user = Officescope_user(request.form['fullname'], request.form['username'],
+            user = User(request.form['fullname'], request.form['username'],
                 request.form['email'], generate_password_hash(request.form['password']))
-            new_folder = Officescope_folder('home', 'ROOT', 'home')
+            new_folder = Folder('home', 'ROOT', 'home')
             new_folder.owner = user
             db.session.add(user)
             db.session.add(new_folder)
