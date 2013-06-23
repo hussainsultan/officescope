@@ -13,8 +13,5 @@ mail = Mail(app)
 #def not_found(error):
 #   return render_template('404.html'), 404
 
-from app.shafayet.views import shafayet as shafayet_mod
-app.register_blueprint(shafayet_mod)
-
 from app.officescope.views import officescope as officescope_mod
 app.register_blueprint(officescope_mod)
