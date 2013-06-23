@@ -1,0 +1,28 @@
+{% extends "layouts/shafayet.html" %}
+{% block title %}About{% endblock %}
+{% block style %}
+{% endblock %}
+{% block about_active %}class="active"{% endblock %}
+{% block content %}
+        <div class="container-narrow">
+            <div class="row">
+                <div class="span7">
+                    <blockquote class="quote">
+                        <p>I have only made this letter longer because I have not had the time to make it shorter.</p>
+                        <p class="pull-right">- Blaise Pascal</p>
+                    </blockquote>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="span7" itemscope itemtype="http://data-vocabulary.org/Person">
+                    <h1 class="titlefont">About Me</h1>
+                    <p class="about">My name is <span itemprop="name">Shafayet</span> (pronounced something like \ ∫hɑ-'fɑ-yεt,h \) and I'm a passionate <span itemprop="title">computer programmer</span> interested in web and software development. I grew up in <a href="https://en.wikipedia.org/wiki/Dhaka" target="_blank">Dhaka, Bangladesh</a>, moved to the US, where I attended <a href="http://www.assumption.edu/about/newsEvents/newsDetails.aspx/?Channel=%2FChannels%2FCampus+Wide+and+Alumni+and+Admissions&amp;WorkflowItemID=8da585e5-ecff-4014-9db3-b0a03daf2359" target="_blank">college</a>. I'm currently living in <a href="https://en.wikipedia.org/wiki/Worcester,_Massachusetts" target="_blank"><span itemprop="address" itemscope
+          itemtype="http://data-vocabulary.org/Address"><span itemprop="locality">Worcester, MA</span></span></a> and working for <a href="http://www.etfile.com" target="_blank">etfile</a>.</p>
+                    <p class="about">I've an odd fascination with <a href="http://www.python.org" target="_blank">Python</a> and write in it for fun, outside of work. I write in <a href="https://en.wikipedia.org/wiki/C_Sharp_(programming_language)" target="_blank">C#</a> for most work-related projects. Aside from that, I'm interested in following financial markets and improving educational technology.</p>
+                    <h1 class="titlefont">About this Website</h1>
+                    <p class="about">shafayet.com is a personal website of sorts, written in Python using <a href="http://flask.pocoo.org" target="_blank">Flask</a> microframework. On the client side, Twitter <a href="https://github.com/twitter/bootstrap" target="_blank">Bootstrap</a> framework renders all the sleek design stuff. Here's to hoping the site will serve a greater purpose someday.</p>
+                </div>
+            </div>
+        </div>
+{% endblock %}

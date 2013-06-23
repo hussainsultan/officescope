@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang = "en">
+	<head>
+		<meta charset="utf-8">
+		<title>{% block title %}Welcome{% endblock %} | OfficeScope</title>
+		<meta name="viewport" content="width-device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<!-- Styles -->
+		 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
+
+		<style type="text/css">
+			{% block style %}
+	        {% endblock %}
+             body {
+                padding-top: 60px;
+                padding-bottom: 40px;
+              }
+              .sidebar-nav {
+                padding: 9px 0;
+              }
+
+              @media (max-width: 980px) {
+                /* Enable use of floated navbar text */
+                .navbar-text.pull-right {
+                  float: none;
+                  padding-left: 5px;
+                  padding-right: 5px;
+                }
+
+
+              }
+
+              .navbar .brand {
+                padding-bottom: 0px;
+
+              }
+    	</style>
+    	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap/css/bootstrap-responsive.css') }}"><!-- End Style Sheet-->
+    </head>
+
+    <body>
+    	<div class="navbar navbar-fixed-top">
+    		<div class="navbar-inner">
+    			<div class="container">
+    				<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+    					<span class="icon-bar"></span>
+    					<span class="icon-bar"></span>
+    					<span class="icon-bar"></span>
+    				</button>
+    				<a class="brand" href="#"><img src="{{ url_for('static', filename='officescope/img/logo_officescope.png') }}" alt="OfficeScope"></a>
+    				<div class="nav-collapse collapse">
+    					<p class="navbar-text pull-right">
+    					{% if g.user %}
+    						hi, <a href="#" class="navbar-link">{{ g.user.username }}</a>
+    						| <a href="{{ url_for('officescope.logout') }}">Logout</a>
+    					{% else %}
+    						<a href="{{ url_for('officescope.login') }}">Login</a>
+                            | <a href="{{ url_for('officescope.register') }}">Register</a>
+    					{% endif %}
+    					</p>
+    					<ul class="nav">
+    						<li class="active"><a href="#">Home</a></li>
+    						<li><a href="#about">About</a></li>
+    						<li><a href="#contact">Contact</a></li>
+    					</ul>
+
+    				</div> <!-- Nav-collapse -->
+    			</div>
+    		</div>
+    	</div>
+
+
+
+		{% with flashes = get_flashed_messages() %}
+			{% if flashes %}
+				<div>
+					{% for message in flashes %}
+						<p class="flash">{{ message }}</p>
+					{% endfor %}
+				</div>
+			{% endif %}
+		{% endwith %}
+
+    	{% block body %}{% endblock %}
+
+    	<footer>
+    		<p>&copy; Shafayet Khan 2013</p>
+    	</footer>
+
+
+
+
+    </body>
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-29742397-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+    </script>
+ </html>
+

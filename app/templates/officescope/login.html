@@ -1,0 +1,72 @@
+{% extends "layouts/officescope.html" %}
+{% block title %}Sign In{% endblock %}
+{% block style %}
+
+	    body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+        background-color: #f5f5f5;
+      }
+
+      .flash {
+        width: 400px;
+        margin: auto;
+        background: #CEE5F5;
+        padding: 0.5em;
+        margin-bottom: 15px;
+        text-align: center;
+        border: 1px solid #e3e3e3;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+
+      }
+
+      footer p {
+      text-align: center;
+      }
+
+      .form-signin {
+        max-width: 300px;
+        padding: 19px 29px 29px;
+        margin: 30px auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+
+      .form-signin .form-signin-heading,
+      .form-signin .checkbox {
+        margin-bottom: 10px;
+      }
+      .form-signin input[type="text"],
+      .form-signin input[type="password"] {
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 7px 9px;
+      }
+
+{% endblock %}
+{% block body %}
+	<div class = "container">
+		<form class="form-signin" action="{{ url_for('officescope.login') }}" method="POST">
+			<h2 class="form-signin-heading">Please sign in</h2>
+			{% if error %}<div class=error><strong>Error:</strong> {{ error }}</div>{% endif %}
+			<input type="text" class="input-block-level" name=username placeholder="Username">
+			<input type="password" class="input-block-level" name=password placeholder="Password">
+			<label class="checkbox">
+				<input type="checkbox" value="remember-me">Remember me
+			</label>
+			<button class="btn btn-large btn-primary" type="submit">Sign in</button>
+		</form>
+	</div>
+{% endblock %}

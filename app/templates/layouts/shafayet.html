@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>
+            {% block title %}{% endblock %} | Shafayet Khan
+        </title>
+
+        <meta name="viewport" content="width-device-width, initial-scale=1.0">
+        <meta name="description" content="Shafayet Khan - Building things, mostly software.">
+        <meta name="author" content="Shafayet Khan">
+        <meta name="keywords" content="Shafayet, Khan, Shafayet Khan, Software Developer, Application Developer, Python Developer, .NET Developer, resume, Shafayet Khan resume"><!-- Begin Style Sheet-->
+
+        <!-- Styles -->
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='shafayet/css/style.css') }}">
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap/css/bootstrap-responsive.css') }}">
+        <!-- End Style Sheet-->
+        <!-- fav and touch icons -->
+        <link rel="shortcut icon" href="{{ url_for('static', filename='shafayet/img/avatar.png') }}">
+    </head>
+
+    <body>
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container-narrow">
+                    <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                    <div class="nav-collapse collapse">
+                        <p class="navbar-text pull-right">
+                            <a href="#">+</a>
+                        </p>
+                        <ul class="nav">
+                            <li {% block home_active %}{% endblock %}>
+                                    <a href="{{ url_for('shafayet.index') }}">Home</a>
+                                </li>
+                                <li {% block about_active %}{% endblock %}>
+                                    <a href="{{ url_for('shafayet.about') }}">About</a>
+                                </li>
+                                <li {% block contact_active %}{% endblock %}>
+                                    <a href="{{ url_for('shafayet.contact') }}">Contact</a>
+                                </li>
+                        </ul>
+
+                    </div> <!-- Nav-collapse -->
+                </div>
+            </div>
+        </div>
+
+        <div class="container-narrow">
+            {% with flashes = get_flashed_messages() %}
+                {% if flashes %}
+                    <div>
+                        {% for message in flashes %}
+                            <p class="flash">{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+
+
+            {% block content %}{% endblock %}
+        <div class="container-narrow">
+            <div class="row">
+                <div class="span7">
+                    <footer itemscope itemtype="http://data-vocabulary.org/Person">
+                        <p>&copy; <span itemprop="name">Shafayet Khan</span> 2013</p>
+                    </footer>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-29742397-1']);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+
+        </script>
+        <!-- Le javascript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+
+        <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>
+    </body>
+
+</html>
+
