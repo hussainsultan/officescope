@@ -20,7 +20,7 @@ from models import get_user_name, Officescope_user, Officescope_document, Office
 uploaded_files = UploadSet('files', DEFAULTS)
 configure_uploads(app, uploaded_files)
 
-officescope = Blueprint('officescope', __name__, url_prefix='/officescope')
+officescope = Blueprint('officescope', __name__)
 
 @officescope.before_request
 def before_request():
