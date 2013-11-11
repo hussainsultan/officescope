@@ -1,12 +1,12 @@
+#!/usr/bin/lib/env python
+# -*- coding: utf-8 -*-
+
 from __future__ import with_statement
+
 import os.path
-import datetime
-import uuid
-from hashlib import md5
-from datetime import datetime
+
 from flask import (Blueprint, Flask, request, session, url_for, redirect,
         render_template, abort, g, flash, _app_ctx_stack)
-
 from werkzeug import check_password_hash, generate_password_hash
 from flask.ext.uploads import (UploadSet, configure_uploads, DEFAULTS,
         UploadNotAllowed)
@@ -24,6 +24,7 @@ officescope = Blueprint('officescope', __name__)
 
 @officescope.before_request
 def before_request():
+    """Sets user id to g object if not available in session already."""
     g.user = None
     if 'user_id' in session:
         g.user = User.query.filter_by(id=session['user_id']).first()
@@ -34,20 +35,16 @@ def about():
     return 'about'
 
 
-####################################
-#Change this!
-#Change the home route '/path:path>
-#to '/home/<path:path>'
-#change the target of the created
-#folder to ROOT instead of home
-####################################
-
+# TODO: Change this logic... complex is better than complicated
 @officescope.route('/', defaults={'path': 'home'})
 @officescope.route('/home', defaults={'path': 'home'})
 @officescope.route('/<path:path>')
 def home(path):
+    """Shows a list of folders and documents owned by the user. The home page also
+    shows a list of favorites the user has added. If the user is not session, it will
+    redirect to the login page."""
     if g.user:
-        """
+        """ TODO
         if not path_exists(path):
             flash("Folder '%s' does not exist" % path)
             return redirect(url_for('home', path='home'))
@@ -56,7 +53,6 @@ def home(path):
             Folder.path == path).all()
         documents = Document.query.filter(Document.owner_id == g.user.id,
             Document.folder_url == path).all()
-        #join query
         favorites = Favorite.query.join(Folder).filter(Favorite.user_id == g.user.id,
             Folder.id == Favorite.folder_id).all()
         return render_template('officescope/home.html', folders=folders, documents=documents,
@@ -65,8 +61,9 @@ def home(path):
         return redirect(url_for('officescope.login'))
 
 
-@officescope.route('/<path:path>/create_folder', methods=['POST'])
+@officescope.route('/create_folder/<path:path>', methods=['POST'])
 def create_folder(path):
+    """Creates a new folder in the provided path"""
     if not g.user:
         return redirect(url_for('login'))
     #error = None
@@ -85,8 +82,9 @@ def create_folder(path):
         return redirect(url_for('officescope.home', path=path))
 
 
-@officescope.route('/<path:path>/<folder_id>/favorite')
+@officescope.route('/<path:path>/favorite/<folder_id>')
 def add_favorite(path, folder_id):
+    """Adds a new favorite folder into favorites"""
     if not g.user:
         return redirect(url_for('officescope.login'))
     #error = None
@@ -99,44 +97,64 @@ def add_favorite(path, folder_id):
         db.session.commit()
         return redirect(url_for('officescope.home', path=path))
 
-@officescope.route('/<path:path>/<folder_id>/delete_folder')
+
+@officescope.route('/<path:path>/delete_folder/<folder_id>')
 def delete_folder(path, folder_id):
-    #TODO
-    #A recursive way to delete subfolders with while folder.subfolders
+    """Wrapper for delet_folder_recursively and returns to the path of origin."""
     if not g.user:
         return redirect(url_for('officescope.login'))
-    #error = None
     if g.user:
-        folder_to_delete = Folder.query.filter_by(id=folder_id).first()
-        favorite_to_delete = Favorite.query.filter(Favorite.user_id == g.user.id,
-            Favorite.folder_id == folder_id).first()
-        if favorite_to_delete:
-            db.session.delete(favorite_to_delete)
-        db.session.delete(folder_to_delete)
-        db.session.commit()
+        delete_folder_recursively(folder_id)
         return redirect(url_for('officescope.home', path=path))
 
 
-@officescope.route('/<path:path>/<doc_id>/delete_document')
+def delete_folder_recursively(parent_folderid):
+    """Deletes a folder recursively as well as any favorites and documents contained
+    by the folder."""
+    subfolders = Folder.query.filter(Folder.owner_id == g.user.id,
+                                  Folder.folder_id == parent_folderid).all()
+    folder_to_delete = Folder.query.filter(Folder.owner_id == g.user.id,
+                                           Folder.id == parent_folderid).first()
+    favorite_to_delete = Favorite.query.filter(Favorite.user_id == g.user.id,
+                                               Favorite.folder_id == parent_folderid).first()
+    documents_to_delete = Document.query.filter(Document.owner_id == g.user.id,
+                                                Document.folder_id == parent_folderid).all()
+
+    for subfolder in subfolders:
+        delete_folder_recursively(subfolder.id)
+    if favorite_to_delete:
+        db.session.delete(favorite_to_delete)
+    for document in documents_to_delete:
+        delete_document_and_unlink(document.id)
+    db.session.delete(folder_to_delete)
+    db.session.commit()
+
+
+
+@officescope.route('/<path:path>/delete_document/<doc_id>')
 def delete_document(path, doc_id):
+    """Wrapper for delete_document_and_unlink. Redirects to path of origin."""
     if not g.user:
         return redirect(url_for('officescope.login'))
     #error = None
     if g.user:
-        document_to_delete = Document.query.filter_by(id=doc_id).first()
-        db.session.delete(document_to_delete)
-        db.session.commit()
-        file_to_delete = app.config['UPLOADED_FILES_DEST'] + document_to_delete.title
-        if os.path.isfile(file_to_delete):
-            os.remove(file_to_delete)
+        delete_document_and_unlink(doc_id)
         return redirect(url_for('officescope.home', path=path))
 
 
+def delete_document_and_unlink(doc_id):
+    """Deletes a particular document and also unlinks the document from disk."""
+    document_to_delete = Document.query.filter_by(id=doc_id).first()
+    file_to_delete = app.config['UPLOADED_FILES_DEST'] + document_to_delete.title
+    db.session.delete(document_to_delete)
+    db.session.commit()
+    if os.path.isfile(file_to_delete):
+        os.remove(file_to_delete)
 
 
-
-@officescope.route('/<path:path>/upload', methods=['POST'])
+@officescope.route('/upload/<path:path>', methods=['POST'])
 def upload_file(path):
+    """Uploads a file to the supplied path and creates a new document."""
     if not g.user:
         return redirect(url_for('officescope.login'))
     #error = None
@@ -162,10 +180,6 @@ def upload_file(path):
         return redirect(url_for('officescope.home', path=path))
 
 
-
-
-
-
 @officescope.route('/login', methods=['GET', 'POST'])
 def login():
     """Logs the user in."""
@@ -184,6 +198,7 @@ def login():
             session['user_id'] = user.id
             return redirect(url_for('officescope.home'))
     return render_template('officescope/login.html', error=error)
+
 
 @officescope.route('/logout')
 def logout():
@@ -226,6 +241,3 @@ def register():
 
 #jinja filters
 app.jinja_env.filters['getusername'] = get_user_name
-
-
-
