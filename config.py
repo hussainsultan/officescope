@@ -1,7 +1,7 @@
 import os
 _basedir = os.path.abspath(os.path.dirname(__file__))
 
-DEBUG = False
+DEBUG = True
 
 ADMINS = frozenset(['shafayetkhan@gmail.com'])
 SECRET_KEY = 'Change_This_Later'
@@ -37,5 +37,3 @@ MAIL_USERNAME = 'shafayetdotcom@gmail.com'
 MAIL_PASSWORD = 'iseekm2sn@vi'
 
 ADMINS_EMAIL = ['shafayetkhan@gmail.com']
-
-
