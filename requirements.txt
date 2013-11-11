@@ -7,8 +7,14 @@ Jinja2==2.6
 SQLAlchemy==0.8.0
 WTForms==1.0.3
 Werkzeug==0.8.3
+astroid==1.0.1
 blinker==1.2
 distribute==0.6.34
+epc==0.0.5
 gunicorn==0.17.4
+jedi==0.7.0
+logilab-common==0.60.0
 psycopg2==2.5
+pylint==1.0.0
+sexpdata==0.0.3
 wsgiref==0.1.2
