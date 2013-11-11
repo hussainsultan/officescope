@@ -1,6 +1,8 @@
-shafayet
+officescope
 ========
 
-Personal Website and Projects
+A drop-box like application built with Flask!
 
-: Git is awesome!
+# TODO:
+  - test.py
+  - sample-config.py
