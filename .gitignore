@@ -1,5 +1,6 @@
 *.py[cod~]
 *.org
+config.py
 # C extensions
 *.so
 
