@@ -61,7 +61,7 @@ def home(path):
         return redirect(url_for('officescope.login'))
 
 
-@officescope.route('/create_folder/<path:path>', methods=['POST'])
+@officescope.route('/<path:path>/create_folder', methods=['POST'])
 def create_folder(path):
     """Creates a new folder in the provided path"""
     if not g.user:
@@ -82,7 +82,7 @@ def create_folder(path):
         return redirect(url_for('officescope.home', path=path))
 
 
-@officescope.route('/<path:path>/favorite/<folder_id>')
+@officescope.route('/<path:path>/<folder_id>/favorite')
 def add_favorite(path, folder_id):
     """Adds a new favorite folder into favorites"""
     if not g.user:
@@ -98,7 +98,7 @@ def add_favorite(path, folder_id):
         return redirect(url_for('officescope.home', path=path))
 
 
-@officescope.route('/<path:path>/delete_folder/<folder_id>')
+@officescope.route('/<path:path>/<folder_id>/delete_folder')
 def delete_folder(path, folder_id):
     """Wrapper for delet_folder_recursively and returns to the path of origin."""
     if not g.user:
@@ -131,7 +131,7 @@ def delete_folder_recursively(parent_folderid):
 
 
 
-@officescope.route('/<path:path>/delete_document/<doc_id>')
+@officescope.route('/<path:path>/<doc_id>/delete_document')
 def delete_document(path, doc_id):
     """Wrapper for delete_document_and_unlink. Redirects to path of origin."""
     if not g.user:
@@ -152,7 +152,7 @@ def delete_document_and_unlink(doc_id):
         os.remove(file_to_delete)
 
 
-@officescope.route('/upload/<path:path>', methods=['POST'])
+@officescope.route('/<path:path>/upload', methods=['POST'])
 def upload_file(path):
     """Uploads a file to the supplied path and creates a new document."""
     if not g.user:
