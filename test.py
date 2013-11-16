@@ -10,7 +10,7 @@ class OfficescopeTestCase(unittest.TestCase):
 
     def setUp(self):
         app.config['TESTING'] = True
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:iseekm2sn@vi@localhost/officescope_dev'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://shafayet:iseekm2sn@vi@localhost/officescope_dev'
         self.app = app.test_client()
         db.create_all()
 
@@ -19,7 +19,10 @@ class OfficescopeTestCase(unittest.TestCase):
         db.drop_all()
 
     def test_registration(self):
-        pass
+        rv = self.register('Shafayet Khan', 'shafayet', 'shafayetkhan@gmail.com',
+                           'youwillneverguess','youwillneverguess')
+
+        assert 'You were successfully registered and can login now' in rv.data
 
     def register(self, name, username, email, password, cpassword):
         return self.app.post('/register', data=dict(
@@ -29,3 +32,7 @@ class OfficescopeTestCase(unittest.TestCase):
             password=password,
             password2=cpassword
         ), follow_redirects=True)
+
+
+if __name__ == '__main__':
+    unittest.main()
