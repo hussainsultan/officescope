@@ -10,9 +10,9 @@ SECRET_KEY = 'Change_This_Later'
 # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(_basedir, 'app.db')
 # SQLALCHEMY_DATABASE_URI = 'mysql://root:iseekm2sn@vi@localhost/officescope'
 #Uncomment the line below for foreman to work
-#SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:iseekm2sn@vi@localhost/officescope_dev'
+#SQLALCHEMY_DATABASE_URI = 'postgresql://shafayet:iseekm2sn@vi@localhost/officescope_dev'
 #heroku - uncomment the line below for live database to work
-SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 DATABASE_CONNECT_OPTIONS = {}
 
 THREADS_PER_PAGE = 8

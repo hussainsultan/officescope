@@ -4,7 +4,6 @@ officescope
 A drop-box like application built with Flask!
 
 # TODO:
-  - test.py
-  - sample-config.py
+  - add more test cases
 
 : www.shafayet.com/officescope
