@@ -10,7 +10,7 @@ class OfficescopeTestCase(unittest.TestCase):
 
     def setUp(self):
         app.config['TESTING'] = True
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://shafayet:iseekm2sn@vi@localhost/officescope_dev'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://shafayet@localhost/officescope_dev'
         self.app = app.test_client()
         db.create_all()
 
