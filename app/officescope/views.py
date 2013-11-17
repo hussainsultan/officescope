@@ -61,7 +61,7 @@ def home(path):
         return redirect(url_for('officescope.login'))
 
 
-@officescope.route('/<path:path>/create_folder', methods=['POST'])
+@officescope.route('/<path:path>/create', methods=['POST'])
 def create_folder(path):
     """Creates a new folder in the provided path"""
     if not g.user:
@@ -98,7 +98,7 @@ def add_favorite(path, folder_id):
         return redirect(url_for('officescope.home', path=path))
 
 
-@officescope.route('/<path:path>/<folder_id>/delete_folder')
+@officescope.route('/<path:path>/<folder_id>/delete')
 def delete_folder(path, folder_id):
     """Wrapper for delet_folder_recursively and returns to the path of origin."""
     if not g.user:
